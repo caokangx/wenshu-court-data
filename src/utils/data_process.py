@@ -20,3 +20,8 @@ def get_keyword_data():
 
 def get_csv_data(file_name):
     return pandas.read_csv('../wenshu-court-data/data/%s.csv' % file_name, usecols=['docId', 'content'])
+
+
+def save_csv_data(file_path, data_list, columns, index=False):
+    df = pandas.DataFrame(data_list, columns=columns)
+    df.to_csv(file_path, index=index)

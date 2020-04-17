@@ -1,20 +1,40 @@
 import re
-from utils.constants import prod_brand_reg_obj, prod_keyword_reg_func, prod_model_reg_obj, prod_split_reg_obj, \
-    fact_start_reg_obj, fact_end_reg_obj
+from utils.constants import fact_start_reg_obj, fact_end_reg_obj
+
+from utils.reg import prod_reg_obj_list, prod_split_reg_obj
 
 
+#  对每个句子进行规则匹配，不同的规则自己定义，规则之间有权重（有正，有负），最后取总和最高者
 def get_prod_info_reg(fact_text, keyword, incident):
     sentence_list = prod_split_reg_obj.split(fact_text)
-    prod_keyword_reg_obj = prod_keyword_reg_func(keyword)
+    sentence_list = strip_list(sentence_list)
 
-    for item in sentence_list:
-        has_brand = prod_brand_reg_obj.search(item)
-        has_keyword = prod_keyword_reg_obj.search(item)
-        has_model = prod_model_reg_obj.search(item)
-        if (has_brand and has_keyword) or (has_brand and has_model) or (has_keyword and has_model):
-            return item
+    match_info_list = []
+
+    for sentence in sentence_list:
+        match_info = {
+            "weight": 0,
+            "match_reg_list": [],
+            "product_text": ""
+        }
+        for recognize_obj in prod_reg_obj_list:
+            recognize_func = recognize_obj["function"]
+            recognize_weight = recognize_obj["weight"]
+            product_info = recognize_func(sentence, keyword)
+            if product_info:
+                match_info["weight"] += recognize_weight
+                match_info["match_reg_list"].append(recognize_obj["description"])
+                match_info["product_text"] = sentence
+
+        if len(match_info["match_reg_list"]) > 0:
+            match_info_list.append(match_info)
+
+    if len(match_info_list) > 0:
+        match_info_list.sort(key=lambda k: (k.get('weight', 0)), reverse=True)
+        return match_info_list
 
     return None
+
 
 
 def get_fact_start_pos_reg(row):
@@ -73,3 +93,8 @@ def get_fact_reg(row):
     else:
         fact = None
     return fact
+
+
+def strip_list(str_list):
+    return [x.strip() for x in str_list]
+
