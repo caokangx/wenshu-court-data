@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from io import StringIO
 from doc_classification import classify_doc
+from request import upload_doc_to_backend
 from .apps import cnn_model
 from product_ner import do_prod_ner
 
@@ -31,6 +32,7 @@ def upload(request):
     df = classify_doc(cnn_model, df)
     data_list = do_prod_ner(df, keyword='冰箱', incident='爆炸')
 
+    upload_doc_to_backend(data_list)
     return JsonResponse({
         'dataList': data_list
     })
