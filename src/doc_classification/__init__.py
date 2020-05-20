@@ -10,7 +10,7 @@ import os
 import sys
 
 MAX_VOCAB_SIZE = 10000  # 词表长度限制
-UNK, PAD = '<UNK>', '的'  # 未知字，padding符号
+UNK, PAD = '<UNK>', '<PAD>'  # 未知字，padding符号
 
 config = None
 vocab = None
