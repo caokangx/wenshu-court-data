@@ -29,11 +29,11 @@ class Config(object):
         self.n_vocab = 0                                                # 词表大小，在运行时赋值
         self.num_epochs = 1000                                          # epoch数
         self.batch_size = 128                                           # mini-batch大小
-        self.pad_size = 128                                             # 每句话处理成的长度(短填长切)
+        self.pad_size = 256                                             # 每句话处理成的长度(短填长切)
         self.learning_rate = 1e-3                                       # 学习率
         self.embed = self.embedding_pretrained.size(1)\
             if self.embedding_pretrained is not None else 300           # 字向量维度
-        self.num_filters =  150                                         # 卷积核数量(channels数)
+        self.num_filters =  200                                         # 卷积核数量(channels数)
 
 
 '''Deep Pyramid Convolutional Neural Networks for Text Categorization'''
