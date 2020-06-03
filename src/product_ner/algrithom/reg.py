@@ -14,7 +14,7 @@ def get_prod_info_reg(fact_text, keyword, incident):
         match_info = {
             "weight": 0,
             "match_reg_list": [],
-            "product_text": ""
+            "context": ""
         }
         for recognize_obj in prod_reg_obj_list:
             recognize_func = recognize_obj["function"]
@@ -23,7 +23,7 @@ def get_prod_info_reg(fact_text, keyword, incident):
             if product_info:
                 match_info["weight"] += recognize_weight
                 match_info["match_reg_list"].append(recognize_obj["description"])
-                match_info["product_text"] = sentence
+                match_info["context"] = sentence
 
         if len(match_info["match_reg_list"]) > 0:
             match_info_list.append(match_info)

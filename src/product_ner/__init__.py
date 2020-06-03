@@ -2,7 +2,8 @@ from product_ner.utils.data_process import get_keyword_dict, get_data_file_name,
     save_csv_data
 from product_ner.utils.fact_process import get_fact
 from product_ner.utils.prod_process import get_prod_info
-
+import time
+from datetime import datetime
 
 # testing
 # keyword_dict = {
@@ -29,23 +30,35 @@ def startup():
     save_csv_data("./product2.csv", data_list, ["weight", "fact", "docId"])
 
 
-def do_prod_ner(data, keyword, incident):
+def do_prod_ner(data):
     data_list = []
 
     for index, row in data.iterrows():
+
+        product = row['product']
+        incident = row['criteria']
+
         if row.label == 0:
             continue
         fact_text = get_fact(row)
         if fact_text:
-            prod_info = get_prod_info(fact_text, keyword, incident)
-            if prod_info:
+            prod_list = get_prod_info(fact_text, product, incident)
+            if prod_list:
                 data_list.append({
-                    "weight": prod_info[0]["weight"],
-                    "docId": row.docId,
-                    "product": prod_info[0]["product_text"],
-                    "fact": fact_text
+                    'product': row['product'],
+                    'docId': row['docId'],
+                    'court': row['court'],
+                    'type': row['type'],
+                    'causeOfAction': row['causeOfAction'],
+                    'processing': row['processing'],
+                    'content': row['content'],
+                    'criteria': row['criteria'],
+                    'name': row['name'],
+                    'litigant': row['litigant'],
+                    'publishDate': int(time.mktime(datetime.strptime(row['publishDate'], "%Y-%m-%d").timetuple()) * 1000),
+                    'prodList': prod_list
                 })
-                print("docId:", row.docId, "product:", prod_info[:3])
+                print("docId:", row.docId, "product:", prod_list[:3])
             # print("docId:", row.docId, "fact:", fact_text)
-    data_list.sort(key=lambda k: (k.get('weight', 0)), reverse=True)
+    data_list.sort(key=lambda k: k['prodList'][0]['weight'], reverse=True)
     return data_list

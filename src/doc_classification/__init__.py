@@ -89,7 +89,7 @@ def loading_cnn_model(dataset='../doc_classification/court', embedding='embeddin
 
 # input: pandas.DataFrame list
 def classify_doc(model, doc_data_frame):
-
+    result_list = [];
     for i, row in doc_data_frame.iterrows():
         document = row.content
         document_cut = jieba.cut(document)
@@ -101,6 +101,7 @@ def classify_doc(model, doc_data_frame):
         document = build_dataset(document_clean)
         document = torch.tensor(document, dtype=torch.long)
         label = classify(model, document)
-        row["label"] = label
+        result_list.append(label);
+    doc_data_frame = doc_data_frame.assign(label=result_list)
     return doc_data_frame
 
