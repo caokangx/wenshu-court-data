@@ -6,3 +6,4 @@ build
 __pycache__
 .idea
 .DS_Store
+src/event_extraction/data

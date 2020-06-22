@@ -1,12 +1,10 @@
 from product_ner.utils.constants import fact_start_reg_obj, fact_end_reg_obj
-
 from product_ner.utils.reg import prod_reg_obj_list, prod_split_reg_obj
 
 
 #  对每个句子进行规则匹配，不同的规则自己定义，规则之间有权重（有正，有负），最后取总和最高者
 def get_prod_info_reg(fact_text, keyword, incident):
-    sentence_list = prod_split_reg_obj.split(fact_text)
-    sentence_list = strip_list(sentence_list)
+    sentence_list = get_sentence_list(fact_text)
 
     match_info_list = []
 
@@ -97,3 +95,8 @@ def get_fact_reg(row):
 def strip_list(str_list):
     return [x.strip() for x in str_list]
 
+
+def get_sentence_list(fact_text):
+    sentence_list = prod_split_reg_obj.split(fact_text)
+    sentence_list = strip_list(sentence_list)
+    return sentence_list

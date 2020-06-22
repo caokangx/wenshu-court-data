@@ -15,11 +15,11 @@ def get_data_file_name(key, value):
 
 
 def get_keyword_data():
-    return pandas.read_csv('../wenshu-court-data/config/关键词')
+    return pandas.read_csv('../../wenshu-court-data/config/关键词')
 
 
 def get_csv_data(file_name):
-    return pandas.read_csv('../wenshu-court-data/data/%s.csv' % file_name, usecols=['docId', 'content'])
+    return pandas.read_csv('../../wenshu-court-data/data/%s.csv' % file_name, usecols=['docId', 'content'])
 
 
 def save_csv_data(file_path, data_list, columns, index=False):
