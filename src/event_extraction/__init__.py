@@ -1,11 +1,19 @@
-from product_ner.utils.data_process import get_keyword_data, get_keyword_dict, get_data_file_name, get_csv_data, save_csv_data
+from product_ner.utils.data_process import get_keyword_data, get_keyword_dict, get_data_file_name, get_csv_data, save_csv_data, save_json_data
 from product_ner.utils.fact_process import get_fact
 from product_ner.algrithom.reg import get_sentence_list
 import re
 import jieba
 
-INJURY_KEYWORD_PATTERN = "伤害|爆炸|起火|自燃|死亡|身亡|火灾|事故|着火|刺激|故障"
+INJURY_KEYWORD_PATTERN = "伤害|爆炸|起火|自燃|死亡|身亡|火灾|事故|着火|刺激|故障|烧毁"
 injury_keyword_reg = re.compile(INJURY_KEYWORD_PATTERN)
+label_constants = {
+    'NONE': 'None',
+    'TRIGGER': 'TRIGGER'
+}
+mark_constants = {
+    'A': 'A',
+    'B': 'B'
+}
 
 
 def startup():
@@ -22,7 +30,7 @@ def startup():
                 print("file: %s.csv doesn't exists." % file_name)
                 continue
             data_list = do_event_extraction(data, keyword, incident)
-            save_csv_data("./data/" + file_name + ".csv", data_list, ['word', 'label'])
+            save_json_data("./data/" + file_name + ".json", data_list)
             print(file_name, 'ended')
 
 
@@ -41,13 +49,26 @@ def do_event_extraction(data, *args):
         sentence_list = get_sentence_list(fact_text)
 
         for sentence in sentence_list:
-            sentence_cut = jieba.cut(sentence)
-            for word in sentence_cut:
-                label = 1 if injury_keyword_reg.search(word) else 0
-                data_list.append({
-                    'word': word,
-                    'label': label
-                })
-                # print("word:", word, "label:", label)
+            if not len(sentence):
+                continue
+
+            sentence_cut = list(jieba.cut(sentence))
+            injury_flag = False
+            data = {
+                'words': sentence_cut,
+                'marks': [mark_constants['A']] * len(sentence_cut),
+                'pos_taggings': [str(n) for n in range(len(sentence_cut))],
+                'label': label_constants['NONE']
+            }
+            for index, word in enumerate(sentence_cut):
+                if injury_keyword_reg.search(word):
+                    data['marks'][index] = mark_constants['B']
+                    data['label'] = label_constants['TRIGGER']
+                    injury_flag = True
+                    break
+            if not injury_flag:
+                data['marks'][0] = mark_constants['B']
+
+            data_list.append(data)
     return data_list
 

@@ -1,3 +1,5 @@
+import json
+
 import pandas
 
 
@@ -25,3 +27,8 @@ def get_csv_data(file_name):
 def save_csv_data(file_path, data_list, columns, index=False):
     df = pandas.DataFrame(data_list, columns=columns)
     df.to_csv(file_path, index=index)
+
+
+def save_json_data(file_path, data):
+    with open(file_path, "w", encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False)
