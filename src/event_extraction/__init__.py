@@ -1,6 +1,8 @@
-from product_ner.utils.data_process import get_keyword_data, get_keyword_dict, get_data_file_name, get_csv_data, save_csv_data, save_json_data
+from product_ner.utils.data_process import get_keyword_data, get_keyword_dict, get_data_file_name, get_csv_data, \
+    save_csv_data, save_json_data
 from product_ner.utils.fact_process import get_fact
 from product_ner.algrithom.reg import get_sentence_list
+from .utils import removePunctuation
 import re
 import jieba
 
@@ -49,9 +51,9 @@ def do_event_extraction(data, *args):
         sentence_list = get_sentence_list(fact_text)
 
         for sentence in sentence_list:
+            sentence = removePunctuation(sentence)
             if not len(sentence):
                 continue
-
             sentence_cut = list(jieba.cut(sentence))
             injury_flag = False
             data = {
@@ -71,4 +73,6 @@ def do_event_extraction(data, *args):
 
             data_list.append(data)
     return data_list
+
+
 
