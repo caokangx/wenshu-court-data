@@ -51,10 +51,10 @@ def do_event_extraction(data, *args):
         sentence_list = get_sentence_list(fact_text)
 
         for sentence in sentence_list:
-            sentence = removePunctuation(sentence)
             if not len(sentence):
                 continue
             sentence_cut = list(jieba.cut(sentence))
+            sentence_cut = trim_list(sentence_cut)
             injury_flag = False
             data = {
                 'words': sentence_cut,
@@ -75,4 +75,15 @@ def do_event_extraction(data, *args):
     return data_list
 
 
+def trim_list(li):
+    for index in range((len(li) - 1), -1, -1):
+        item = removePunctuation(li[index])
+        if not_empty(item):
+            li[index] = item.strip()
+        else:
+            li.pop(index)
+    return list(li)
+
+def not_empty(s):
+    return s and s.strip()
 
