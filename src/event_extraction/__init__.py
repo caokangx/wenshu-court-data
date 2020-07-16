@@ -6,7 +6,7 @@ from .utils import removePunctuation
 import re
 import jieba
 
-INJURY_KEYWORD_PATTERN = "伤害|爆炸|起火|自燃|死亡|身亡|火灾|事故|着火|刺激|故障|烧毁"
+INJURY_KEYWORD_PATTERN = "伤害|爆炸|起火|自燃|死亡|身亡|火灾|事故|着火|刺激|故障|烧毁|引燃|毁损|损坏|失火|燃烧|受损|受伤|泄漏|辐射|原因|导致"
 injury_keyword_reg = re.compile(INJURY_KEYWORD_PATTERN)
 label_constants = {
     'NONE': 'None',
@@ -55,6 +55,9 @@ def do_event_extraction(data, *args):
                 continue
             sentence_cut = list(jieba.cut(sentence))
             sentence_cut = trim_list(sentence_cut)
+            if not len(sentence_cut):
+                continue
+
             injury_flag = False
             data = {
                 'words': sentence_cut,
