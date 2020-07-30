@@ -87,6 +87,6 @@ def trim_list(li):
             li.pop(index)
     return list(li)
 
+
 def not_empty(s):
     return s and s.strip()
-
