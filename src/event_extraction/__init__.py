@@ -5,8 +5,9 @@ from product_ner.algrithom.reg import get_sentence_list
 from .utils import removePunctuation
 import re
 import jieba
+import random
 
-INJURY_KEYWORD_PATTERN = "伤害|爆炸|起火|自燃|死亡|身亡|火灾|事故|着火|刺激|故障|烧毁"
+INJURY_KEYWORD_PATTERN = "伤害|爆炸|起火|自燃|死亡|身亡|火灾|事故|着火|刺激|故障|烧毁|引燃|毁损|损坏|失火|燃烧|受损|受伤|泄漏|辐射|原因|导致"
 injury_keyword_reg = re.compile(INJURY_KEYWORD_PATTERN)
 label_constants = {
     'NONE': 'None',
@@ -56,12 +57,18 @@ def do_event_extraction(data, *args):
             sentence_cut = list(jieba.cut(sentence))
             sentence_cut = trim_list(sentence_cut)
             injury_flag = False
+            if len(sentence_cut) == 0:
+                continue
+            if len(sentence_cut) > 30:
+                sentence_cut = sentence_cut[0:30]
             data = {
                 'words': sentence_cut,
                 'marks': [mark_constants['A']] * len(sentence_cut),
                 'pos_taggings': [str(n) for n in range(len(sentence_cut))],
                 'label': label_constants['NONE']
             }
+            if len(sentence_cut) == 0:
+                continue
             for index, word in enumerate(sentence_cut):
                 if injury_keyword_reg.search(word):
                     data['marks'][index] = mark_constants['B']
@@ -69,6 +76,10 @@ def do_event_extraction(data, *args):
                     injury_flag = True
                     break
             if not injury_flag:
+                #print(data)
+                rand = random.random()
+                if rand > 0.25:
+                    continue
                 data['marks'][0] = mark_constants['B']
 
             data_list.append(data)
