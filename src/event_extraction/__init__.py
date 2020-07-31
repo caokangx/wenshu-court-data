@@ -56,6 +56,9 @@ def do_event_extraction(data, *args):
                 continue
             sentence_cut = list(jieba.cut(sentence))
             sentence_cut = trim_list(sentence_cut)
+            if not len(sentence_cut):
+                continue
+
             injury_flag = False
             if len(sentence_cut) == 0:
                 continue
@@ -95,6 +98,6 @@ def trim_list(li):
             li.pop(index)
     return list(li)
 
+
 def not_empty(s):
     return s and s.strip()
-

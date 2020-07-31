@@ -7,3 +7,4 @@ __pycache__
 .idea
 .DS_Store
 src/event_extraction/data
+src/event_extraction_preprocess/results
